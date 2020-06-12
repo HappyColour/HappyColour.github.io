@@ -2,59 +2,124 @@
 <html>
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Danny's website</title>
 </head>
 
 <body>
     <style>
-   	body,html {
-        position: relative;
-   		padding: 0;
-   		margin: 0;
-        width: 100vw;
-        height: 100vh;
-        overflow-y: hidden;
-   	}
-    body {
-        background-image: linear-gradient(141deg,#9fb8ad 0%,#1fc8db 51%,#2cb5e8 75%)
-    }
-    #Danny-Resume {
-        width: 86vw;
-        margin: 168px auto 0;
-        text-align: end;
-        font-size: 16px;
-        color: #000;
-    }
-    li {
-        line-height: 1.68;
-    	list-style: none;
-    }
-    @media screen and (max-width: 768px) {
-        .ms-tech,.ms-intro {
-            font-size: .8rem;
+        body,
+        html {
+            position: relative;
+            padding: 0;
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow-y: hidden;
+            background-image: linear-gradient(141deg,
+                    #9fb8ad 0%,
+                    #1fc8db 51%,
+                    #2cb5e8 75%);
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            -khtml-user-select: none;
+            user-select: none;
         }
-        .ms-intro {
-            text-align: justify;
+
+        #Danny-Resume {
+            width: 86vw;
+            margin: 168px auto 0;
+            text-align: end;
+            font-size: 16px;
+            color: #000;
         }
-    }
+
+        li {
+            line-height: 1.68;
+            list-style: none;
+        }
+
+        @media screen and (max-width: 768px) {
+
+            .ms-tech,
+            .ms-intro {
+                font-size: 0.8rem;
+            }
+
+            .ms-intro {
+                text-align: justify;
+            }
+        }
     </style>
     <div id="Danny-Resume">
         <h1>Danny Zhang（张鑫）</h1>
         <p>前端工程师（Front-End Developer）</p>
         <p class="ms-tech">ES6、NodeJs、Vue、NuxtJs、Webpack、HTML5、Sass</p>
-        <p class="ms-intro">项目管理、需求の对接 & 推进、更优方案の落地 & 评估、性能优化、打包分析 & 优化、公共组件封装、公共可继承样式封装、Web Components</p>
+        <p class="ms-intro">
+            项目管理、需求の对接 & 推进、更优方案の落地 & 评估、性能优化、打包分析 &
+            优化、公共组件封装、公共可继承样式封装、Web Components
+        </p>
         <h2>Projects on Github</h2>
         <ul>
-            <li><a href="https://github.com/HappyColour/filter-invalid-images" rel="noopener noreferrer" target="_blank">fileter-invalid-images</a></li>
-            <li><a href="https://github.com/HappyColour/i18n-file-to-json" rel="noopener noreferrer" target="_blank">i18n-file-to-json</a></li>
+            <li>
+                <a href="https://github.com/HappyColour/filter-invalid-images" rel="noopener noreferrer"
+                    target="_blank">fileter-invalid-images</a>
+            </li>
+            <li>
+                <a href="https://github.com/HappyColour/i18n-file-to-json" rel="noopener noreferrer"
+                    target="_blank">i18n-file-to-json</a>
+            </li>
         </ul>
         <h3>Contact</h3>
-        <p>Email：<a href="mailto:happyelement.danny@gmail.com" rel="noopener noreferrer" target="_blank">happyelement.danny@gmail.com</a></p>
-        <p>Github：<a href="https://github.com/HappyColour" rel="noopener noreferrer" target="_blank">https://github.com/HappyColour</a></p>
+        <p>
+            Email：<a href="mailto:happyelement.danny@gmail.com" rel="noopener noreferrer"
+                target="_blank">happyelement.danny@gmail.com</a>
+        </p>
+        <p>
+            Github：<a href="https://github.com/HappyColour" rel="noopener noreferrer"
+                target="_blank">https://github.com/HappyColour</a>
+        </p>
     </div>
 </body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script>
+    let getRandomColorX = function () {
+        return (
+            "#" +
+            (function (color) {
+                return (color += "0123456789abcdef" [
+                        Math.floor(Math.random() * 16)
+                    ]) && color.length == 6 ?
+                    color :
+                    arguments.callee(color);
+            })("")
+        );
+    };
+    let getRandomColorY = function () {
+        return (
+            "#" +
+            (function (color) {
+                return (color += "0123456789abcdef" [
+                        Math.floor(Math.random() * 16)
+                    ]) && color.length == 6 ?
+                    color :
+                    arguments.callee(color);
+            })("")
+        );
+    };
+    $("body").on("click", function () {
+        $(this).css({
+            background: "-webkit-gradient(linear, left top, left bottom, from(" +
+                getRandomColorX() +
+                "), to(" +
+                getRandomColorY() +
+                "))"
+        });
+    });
+</script>
 
 </html>
