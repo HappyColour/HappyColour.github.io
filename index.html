@@ -1,133 +1,165 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no"
+    />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Danny's website</title>
-</head>
+    <title>Danny Zhang</title>
+  </head>
 
-<body>
+  <body>
     <style>
-        body,
-        html {
-            position: relative;
-            padding: 0;
-            margin: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow-y: hidden;
-            background-image: linear-gradient(141deg,
-                    #9fb8ad 0%,
-                    #1fc8db 51%,
-                    #2cb5e8 75%);
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            -khtml-user-select: none;
-            user-select: none;
-        }
+      body {
+        font-size: calc(10px + 0.33vw);
+        -webkit-font-smoothing: antialiased;
+        padding: 5vh 10vw;
+        color: #121314;
+      }
+      body,
+      html {
+        position: relative;
+        padding: 0;
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow-y: hidden;
+        background-image: linear-gradient(
+          141deg,
+          #9fb8ad 0%,
+          #1fc8db 51%,
+          #2cb5e8 75%
+        );
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        -khtml-user-select: none;
+        user-select: none;
+      }
 
+      #Danny-Resume {
+        width: 86vw;
+        margin: 0 auto;
+        text-align: end;
+      }
+
+      p,
+      li {
+        font-size: 1em;
+        line-height: 1.8;
+        list-style: none;
+      }
+
+      a {
+        text-decoration: none;
+        white-space: nowrap;
+        position: relative;
+      }
+      a:hover {
+        opacity: 0.6;
+      }
+
+      @media screen and (max-width: 768px) {
         #Danny-Resume {
-            width: 86vw;
-            margin: 168px auto 0;
-            text-align: end;
-            font-size: 16px;
-            color: #000;
+          margin: 0 auto;
         }
-
-        li {
-            line-height: 1.68;
-            list-style: none;
-        }
-
-        @media screen and (max-width: 768px) {
-            #Danny-Resume {
-                margin: 106px auto;
-            }
-
-            h1 {
-                white-space: nowrap;
-            }
-
-            .ms-tech,
-            .ms-intro {
-                font-size: 0.8rem;
-            }
-
-            .ms-intro {
-                text-align: justify;
-            }
-            
-        }
+      }
     </style>
     <div id="Danny-Resume">
-        <h1>Danny Zhang（张鑫）</h1>
-        <p>前端工程师（Front-End Developer）</p>
-        <p class="ms-tech">ES6、NodeJs、Vue、NuxtJs、Webpack、HTML5、Sass</p>
-        <p class="ms-intro">
-            项目管理、需求の对接 & 推进、更优方案の落地 & 评估、性能优化、打包分析 &
-            优化、公共组件封装、公共可继承样式封装、Web Components
-        </p>
-        <h2>Projects on Github</h2>
-        <ul>
-            <li>
-                <a href="https://github.com/HappyColour/filter-invalid-images" rel="noopener noreferrer"
-                    target="_blank">filter-invalid-images</a>
-            </li>
-            <li>
-                <a href="https://github.com/HappyColour/i18n-file-to-json" rel="noopener noreferrer"
-                    target="_blank">i18n-file-to-json</a>
-            </li>
-        </ul>
-        <h3>Contact</h3>
-        <p>
-            Email：<a href="mailto:happyelement.danny@gmail.com" rel="noopener noreferrer"
-                target="_blank">happyelement.danny@gmail.com</a>
-        </p>
-        <p>
-            Github：<a href="https://github.com/HappyColour" rel="noopener noreferrer"
-                target="_blank">https://github.com/HappyColour</a>
-        </p>
+      <h1>张鑫 | Danny Zhang</h1>
+      <h2>期望岗位</h2>
+      <p>产研负责人、技术总监、前端负责人</p>
+      <h2>开源项目和作品</h2>
+      <ul>
+        <li>
+          <a
+            href="https://github.com/HappyColour/nuxt3-template"
+            rel="noopener noreferrer"
+            target="_blank"
+            >Nuxt3最佳实践模板</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://github.com/HappyColour/airtable-to-json"
+            rel="noopener noreferrer"
+            target="_blank"
+            >Airtable转JSON脚本</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://github.com/HappyColour/i18n-file-to-json"
+            rel="noopener noreferrer"
+            target="_blank"
+            >文件类型转化工具</a
+          >
+        </li>
+        <li>
+          <a
+            href="https://github.com/HappyColour/filter-invalid-images"
+            rel="noopener noreferrer"
+            target="_blank"
+            >图片过滤器</a
+          >
+        </li>
+      </ul>
+      <h2>Contact</h2>
+      <p>
+        <a
+          href="mailto:happyelement.danny@gmail.com"
+          rel="noopener noreferrer"
+          target="_blank"
+          >Email</a
+        >
+      </p>
+      <p>
+        <a
+          href="https://github.com/HappyColour"
+          rel="noopener noreferrer"
+          target="_blank"
+          >Github</a
+        >
+      </p>
     </div>
-</body>
-<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
-<script>
+  </body>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+  <script>
     let getRandomColorX = function () {
-        return (
-            "#" +
-            (function (color) {
-                return (color += "0123456789abcdef" [
-                        Math.floor(Math.random() * 16)
-                    ]) && color.length == 6 ?
-                    color :
-                    arguments.callee(color);
-            })("")
-        );
+      return (
+        "#" +
+        (function (color) {
+          return (color += "0123456789abcdef"[
+            Math.floor(Math.random() * 16)
+          ]) && color.length == 6
+            ? color
+            : arguments.callee(color);
+        })("")
+      );
     };
     let getRandomColorY = function () {
-        return (
-            "#" +
-            (function (color) {
-                return (color += "0123456789abcdef" [
-                        Math.floor(Math.random() * 16)
-                    ]) && color.length == 6 ?
-                    color :
-                    arguments.callee(color);
-            })("")
-        );
+      return (
+        "#" +
+        (function (color) {
+          return (color += "0123456789abcdef"[
+            Math.floor(Math.random() * 16)
+          ]) && color.length == 6
+            ? color
+            : arguments.callee(color);
+        })("")
+      );
     };
     $("body").on("click", function () {
-        $(this).css({
-            background: "-webkit-gradient(linear, left top, left bottom, from(" +
-                getRandomColorX() +
-                "), to(" +
-                getRandomColorY() +
-                "))"
-        });
+      $(this).css({
+        background:
+          "-webkit-gradient(linear, left top, left bottom, from(" +
+          getRandomColorX() +
+          "), to(" +
+          getRandomColorY() +
+          "))",
+      });
     });
-</script>
-
+  </script>
 </html>
