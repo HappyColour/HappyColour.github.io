@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>女神节快乐！！！！！</title>
+  </head>
+
+  <body>
+    <style>
+      body {
+        font-size: calc(10px + 0.33vw);
+        -webkit-font-smoothing: antialiased;
+        padding: 5vh 10vw;
+        color: #121314;
+      }
+      body,
+      html {
+        position: relative;
+        padding: 0;
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow-y: hidden;
+        background-color: pink;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        -khtml-user-select: none;
+        user-select: none;
+      }
+
+      #Danny-Resume {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+      }
+
+      p,
+      li {
+        font-size: 1em;
+        line-height: 1.8;
+        list-style: none;
+      }
+
+      a {
+        text-decoration: none;
+        white-space: nowrap;
+        position: relative;
+        color:slateblue;
+      }
+      a:hover {
+        opacity: 0.6;
+      }
+
+      @media screen and (max-width: 768px) {
+        #Danny-Resume {
+          margin: 160px auto 0;
+        }
+      }
+    </style>
+    <div id="Danny-Resume">
+      <h1>祝愿老婆和两位妈妈女神节快乐！！！！</h1>
+    </div>
+  </body>
+  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+  <script>
+    let getRandomColorX = function () {
+      return (
+        "#" +
+        (function (color) {
+          return (color += "0123456789abcdef"[
+            Math.floor(Math.random() * 16)
+          ]) && color.length == 6
+            ? color
+            : arguments.callee(color);
+        })("")
+      );
+    };
+    let getRandomColorY = function () {
+      return (
+        "#" +
+        (function (color) {
+          return (color += "0123456789abcdef"[
+            Math.floor(Math.random() * 16)
+          ]) && color.length == 6
+            ? color
+            : arguments.callee(color);
+        })("")
+      );
+    };
+    $("body").on("click", function () {
+      $(this).css({
+        background:
+          "-webkit-gradient(linear, left top, left bottom, from(" +
+          getRandomColorX() +
+          "), to(" +
+          getRandomColorY() +
+          "))",
+      });
+    });
+  </script>
+</html>
