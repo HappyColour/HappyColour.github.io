@@ -1,137 +1,475 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no"
-    />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Danny Zhang</title>
-  </head>
+<html lang="en">
 
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three Model Render - Best Practice Demo</title>
+
+    <!-- Using Import Maps for modern module loading -->
+    <script type="importmap">
+    {
+        "imports": {
+            "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/examples/jsm/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+            "@chocozhang/three-model-render": "https://unpkg.com/@chocozhang/three-model-render@latest/dist/index.mjs",
+            "@chocozhang/three-model-render/setup": "https://unpkg.com/@chocozhang/three-model-render@latest/dist/setup/index.mjs"
+        }
+    }
+    </script>
     <style>
-      body {
-        font-family: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-          Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
-          sans-serif;
-        font-size: calc(10px + 0.33vw);
-        -webkit-font-smoothing: antialiased;
-        padding: 5vh 10vw;
-        color: #121314;
-      }
-      body,
-      html {
-        position: relative;
-        padding: 0;
-        margin: 0;
-        width: 100vw;
-        height: 100vh;
-        overflow-y: hidden;
-        background-image: linear-gradient(
-          141deg,
-          #9fb8ad 0%,
-          #1fc8db 51%,
-          #2cb5e8 75%
-        );
-        -moz-user-select: none;
-        -webkit-user-select: none;
-        -ms-user-select: none;
-        -khtml-user-select: none;
-        user-select: none;
-      }
-
-      #Danny-Resume {
-        width: 66vw;
-        margin: 10vw auto 0;
-        text-align: end;
-      }
-
-      p,
-      li {
-        font-size: 1em;
-        line-height: 1.8;
-        list-style: none;
-      }
-
-      a {
-        text-decoration: none;
-        white-space: nowrap;
-        position: relative;
-        color:slateblue;
-      }
-      a:hover {
-        opacity: 0.6;
-      }
-
-      @media screen and (max-width: 768px) {
-        #Danny-Resume {
-          margin: 160px auto 0;
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background: #1a1a1a;
         }
-        .justify {
-          text-align: justify
+
+        .three-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            overflow: hidden;
         }
-      }
+
+        #setView {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        #explode {
+            position: fixed;
+            top: 20px;
+            right: 120px;
+            z-index: 10;
+        }
+
+        #explode button {
+            padding: 10px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            width: 85px;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #explode button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .view-select {
+            padding: 10px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+        }
+
+        .view-select option {
+            background: #333;
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: transparent;
+            display: flex;
+            justify-content: flex-end;
+            align-items: stretch;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .modal-card {
+            background: rgba(25, 25, 35, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px 0 0 24px;
+            padding: 30px;
+            width: 400px;
+            max-width: 90%;
+            height: 100%;
+            color: #fff;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            pointer-events: auto;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 15px;
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.8);
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .json-content {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 12px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            color: #a5b3ce;
+            margin: 0;
+        }
+
+        /* Animations */
+        .modal-enter-active,
+        .modal-leave-active {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-enter-from,
+        .modal-leave-to .modal-card {
+            /* Target the inner card for translation */
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .modal-leave-active .modal-card,
+        .modal-enter-active .modal-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-enter-from .modal-card {
+            transform: translateX(100%);
+            opacity: 0;
+        }
     </style>
-    <div id="Danny-Resume">
-      <h1>Danny Zhang</h1>
-      <h2>现状</h2>
-      <p>研发工作十年有余，仍在路上...</p>
-      <h2>Contact</h2>
-      <p>
-        <a
-          href="mailto:happyelement.danny@gmail.com"
-          rel="noopener noreferrer"
-          target="_blank"
-          >Email To Me</a
-        >
-      </p>
-      <p>
-        <a
-          href="https://github.com/HappyColour"
-          rel="noopener noreferrer"
-          target="_blank"
-          >Github Address</a
-        >
-      </p>
+</head>
+
+<body>
+    <div id="app">
+        <div id="three-model-render">
+            <div ref="containerRef" class="three-container"></div>
+
+            <div id="explode">
+                <button v-if="!exploded" @click="explode">EXPLODE</button>
+                <button v-else @click="restore">RESTORE</button>
+            </div>
+
+            <div id="setView">
+                <select v-model="selectedView" @change="changeView" class="view-select">
+                    <option value="front">FRONT</option>
+                    <option value="back">BACK</option>
+                    <option value="left">LEFT</option>
+                    <option value="right">RIGHT</option>
+                    <option value="top">TOP</option>
+                    <option value="iso">ISO</option>
+                </select>
+            </div>
+
+            <transition name="modal">
+                <div v-show="modalShow" class="modal-overlay" @click.self="modalShow = false">
+                    <div class="modal-card">
+                        <div class="modal-header">
+                            <h3 class="modal-title">{{ modalTitle }}</h3>
+                            <button class="close-btn" @click="modalShow = false">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <pre v-if="typeof modalContent === 'object'"
+                                class="json-content">{{ JSON.stringify(modalContent, null, 2) }}</pre>
+                            <p v-else>{{ modalContent }}</p>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </div>
     </div>
-  </body>
-  <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
-  <script>
-    let getRandomColorX = function () {
-      return (
-        "#" +
-        (function (color) {
-          return (color += "0123456789abcdef"[
-            Math.floor(Math.random() * 16)
-          ]) && color.length == 6
-            ? color
-            : arguments.callee(color);
-        })("")
-      );
-    };
-    let getRandomColorY = function () {
-      return (
-        "#" +
-        (function (color) {
-          return (color += "0123456789abcdef"[
-            Math.floor(Math.random() * 16)
-          ]) && color.length == 6
-            ? color
-            : arguments.callee(color);
-        })("")
-      );
-    };
-    $("body").on("click", function () {
-      $(this).css({
-        background:
-          "-webkit-gradient(linear, left top, left bottom, from(" +
-          getRandomColorX() +
-          "), to(" +
-          getRandomColorY() +
-          "))",
-      });
-    });
-  </script>
+
+    <script type="module">
+        import { createApp, ref, onMounted, onBeforeUnmount } from 'vue';
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+        // Import utilities from the local build (via importmap)
+        import {
+            loadModelByUrl,
+            disposeObject,
+            followModels,
+            FOLLOW_ANGLES,
+            setView,
+            initPostProcessing,
+            enableHoverBreath,
+            createModelClickHandler,
+            GroupExploder
+        } from '@chocozhang/three-model-render';
+
+        import { autoSetupCameraAndLight } from '@chocozhang/three-model-render/setup';
+
+        createApp({
+            setup() {
+                const containerRef = ref(null);
+                let scene;
+                let camera;
+                let renderer;
+                let controls;
+                let model;
+                const modelUrl = 'https://happycolour.github.io/gorilla_tag_map.glb';
+                const selectedView = ref('front');
+                let ppManager;
+                let composer;
+                let outlinePass;
+                let hoverController = null;
+                let disposeClickHandler;
+                const modalShow = ref(false);
+                const modalTitle = ref('');
+                const modalContent = ref('');
+                let exploder;
+                let explosionTargets = new Set();
+                let exploded = ref(false);
+                let animationId;
+
+                onMounted(() => {
+                    initScene();
+                    initCamera();
+                    initRenderer();
+                    initControl();
+                    initLoadModel(modelUrl);
+                    initHoverBreath();
+                    initClickHandler();
+                    initGroupExploder();
+                    animate();
+                });
+
+                function initScene() {
+                    scene = new THREE.Scene();
+                }
+
+                function initCamera() {
+                    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+                }
+
+                function initRenderer() {
+                    renderer = new THREE.WebGLRenderer();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                    if (containerRef.value) {
+                        containerRef.value.appendChild(renderer.domElement);
+                    }
+                    window.addEventListener('resize', onWindowResize, false);
+                }
+
+                function onWindowResize() {
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
+                    if (ppManager) ppManager.resize();
+                }
+
+                function initControl() {
+                    controls = new OrbitControls(camera, renderer.domElement);
+                    controls.enableDamping = true;
+                    controls.dampingFactor = 0.05;
+                    controls.enableZoom = true;
+                }
+
+                async function initLoadModel(url) {
+                    model = await loadModelByUrl(url, {
+                        manager: new THREE.LoadingManager(() => {
+                            console.log('Loading complete');
+                        })
+                    });
+                    scene.add(model);
+                    autoSetupCameraAndLight(camera, scene, model);
+
+                    // Cinematic Entrance
+                    followModels(camera, model, {
+                        ...FOLLOW_ANGLES.FRONT,
+                        duration: 1500,
+                        padding: 0.6,
+                        controls,
+                        easing: 'easeInOut'
+                    });
+
+                    // Identify Explosion Targets
+                    model.traverse((child) => {
+                        if (child.isMesh) {
+                            if (child.name === 'Slide_metalbare_1_0' ||
+                                child.name === 'Ladder_1_metalbare_1_0' ||
+                                child.name === 'Ladder_1_metalpattern001_0') {
+                                explosionTargets.add(child);
+                            }
+                        }
+                    });
+                }
+
+                function animate() {
+                    animationId = requestAnimationFrame(animate);
+                    if (controls) controls.update();
+                    // Prioritize composer if available, else standard render
+                    if (composer) {
+                        composer.render();
+                    } else if (renderer && scene && camera) {
+                        renderer.render(scene, camera);
+                    }
+                }
+
+                function changeView() {
+                    setView(camera, controls, model, selectedView.value);
+                }
+
+                function initHoverBreath() {
+                    ppManager = initPostProcessing(renderer, scene, camera, {
+                        resolutionScale: 0.8,
+                        edgeStrength: 4,
+                        visibleEdgeColor: '#ffee00'
+                    });
+                    composer = ppManager.composer;
+                    outlinePass = ppManager.outlinePass;
+
+                    hoverController = enableHoverBreath({
+                        camera,
+                        scene,
+                        renderer,
+                        outlinePass,
+                        throttleDelay: 16,
+                        minStrength: 2,
+                        maxStrength: 8,
+                        speed: 3
+                    });
+                }
+
+                function initClickHandler() {
+                    disposeClickHandler = createModelClickHandler(camera, scene, renderer, outlinePass, (object, info) => {
+                        console.log('Clicked object:', object);
+                        console.log('Info:', info);
+
+                        followModels(camera, object, {
+                            ...FOLLOW_ANGLES.ISOMETRIC,
+                            duration: 1500,
+                            padding: 0.5,
+                            controls,
+                            easing: 'easeInOut'
+                        });
+
+                        modalTitle.value = info?.uuid || 'Details';
+                        modalContent.value = info;
+                        modalShow.value = true;
+                    });
+                }
+
+                function initGroupExploder() {
+                    exploder = new GroupExploder(scene, camera, controls);
+                    exploder.init();
+                }
+
+                function explode() {
+                    exploded.value = true;
+                    exploder.setMeshes(explosionTargets, { autoRestorePrev: true });
+                    exploder.explode({
+                        mode: 'grid',
+                        spacing: 2.8,
+                        duration: 1100,
+                        lift: 1.2,
+                        cameraPadding: 0.8,
+                        dimOthers: { enabled: true, opacity: 0.1 }
+                    });
+                }
+
+                function restore() {
+                    exploded.value = false;
+                    exploder.restore(600);
+                }
+
+                onBeforeUnmount(() => {
+                    disposeObject(model);
+                    if (disposeClickHandler) disposeClickHandler();
+                    if (hoverController) hoverController.dispose();
+                    if (exploder) exploder.dispose();
+                    if (ppManager) ppManager.dispose();
+
+                    if (animationId != null) {
+                        cancelAnimationFrame(animationId);
+                    }
+                    if (controls) controls.dispose();
+                    if (renderer) renderer.dispose();
+                    window.removeEventListener('resize', onWindowResize);
+                });
+
+                return {
+                    containerRef,
+                    selectedView,
+                    changeView,
+                    explode,
+                    restore,
+                    exploded,
+                    modalShow,
+                    modalTitle,
+                    modalContent,
+                    JSON
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+
 </html>
