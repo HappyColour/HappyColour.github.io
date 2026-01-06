@@ -38,6 +38,30 @@
             overflow: hidden;
         }
 
+        #liquidFiller {
+            position: fixed;
+            top: 20px;
+            right: 220px;
+            z-index: 10;
+        }
+
+        #liquidFiller button {
+            padding: 10px;
+            outline: none;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            color: white;
+            width: 85px;
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #liquidFiller button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
         #setView {
             position: fixed;
             top: 20px;
@@ -212,6 +236,11 @@
         <div id="three-model-render">
             <div ref="containerRef" class="three-container"></div>
 
+            <div id="liquidFiller">
+                <button v-if="!fillerStatus" @click="filler">LIQUID</button>
+                <button v-else @click="liquidRestore">RESTORE</button>
+            </div>
+
             <div id="explode">
                 <button v-if="!exploded" @click="explode">EXPLODE</button>
                 <button v-else @click="restore">RESTORE</button>
@@ -261,7 +290,8 @@
             initPostProcessing,
             enableHoverBreath,
             createModelClickHandler,
-            GroupExploder
+            GroupExploder,
+            LiquidFillerGroup
         } from '@chocozhang/three-model-render';
 
         import { autoSetupCameraAndLight } from '@chocozhang/three-model-render/setup';
@@ -287,6 +317,9 @@
                 let exploder;
                 let explosionTargets = new Set();
                 let exploded = ref(false);
+                let fillerStatus = ref(false);
+                let fillerGroup;
+                let fillerTargets = new Set();
                 let animationId;
 
                 onMounted(() => {
@@ -357,6 +390,9 @@
                                 child.name === 'Ladder_1_metalbare_1_0' ||
                                 child.name === 'Ladder_1_metalpattern001_0') {
                                 explosionTargets.add(child);
+                            }
+                            if (child.name === 'cactus2_1_cactus001_0') {
+                                fillerTargets.add(child);
                             }
                         }
                     });
@@ -440,11 +476,35 @@
                     exploder.restore(600);
                 }
 
+                function liquidRestore() {
+                    fillerStatus.value = false;
+                    fillerGroup.restoreAll();
+                }
+
+                function filler() {
+                    fillerStatus.value = true;
+                    followModels(camera, Array.from(fillerTargets)[0], {
+                        duration: 500,
+                        padding: 0.8,
+                        controls,
+                    });
+                    if (fillerGroup) {
+                        fillerGroup.dispose();
+                    }
+                    fillerGroup = new LiquidFillerGroup(fillerTargets, scene, camera, renderer, {
+                        color: 0x00ff00,
+                        opacity: 0.5,
+                        speed: 0.01
+                    }, 10);
+                    fillerGroup.fillTo(fillerTargets, 0.8);
+                }
+
                 onBeforeUnmount(() => {
                     disposeObject(model);
                     if (disposeClickHandler) disposeClickHandler();
                     if (hoverController) hoverController.dispose();
                     if (exploder) exploder.dispose();
+                    if (fillerGroup) fillerGroup.dispose();
                     if (ppManager) ppManager.dispose();
 
                     if (animationId != null) {
@@ -462,6 +522,9 @@
                     explode,
                     restore,
                     exploded,
+                    filler,
+                    liquidRestore,
+                    fillerStatus,
                     modalShow,
                     modalTitle,
                     modalContent,
