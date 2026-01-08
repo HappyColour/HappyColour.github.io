@@ -12,7 +12,7 @@
         "imports": {
             "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
             "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-            "three/examples/jsm/": "https://unpkg.com/three@0.181.2/examples/jsm/",
+            "three/examples/jsm/": "https://unpkg.com/three@0.160.0/examples/jsm/",
             "@chocozhang/three-model-render": "https://unpkg.com/@chocozhang/three-model-render@latest/dist/index.mjs",
             "@chocozhang/three-model-render/setup": "https://unpkg.com/@chocozhang/three-model-render@latest/dist/setup/index.mjs"
         }
@@ -409,166 +409,165 @@
                             }
                         }
                     });
-                });
                 }
 
-        function initLabels(model) {
-            labelManager = createModelsLabel(camera, renderer, model, labelsMap, {
-                style: 'line',
-                lift: 120,
-                enableOcclusionDetection: true
-            });
-        }
+                function initLabels(model) {
+                    labelManager = createModelsLabel(camera, renderer, model, labelsMap, {
+                        style: 'line',
+                        lift: 120,
+                        enableOcclusionDetection: true
+                    });
+                }
 
-        function initPerformanceMonitor() {
-            perfMonitor = createPerformanceMonitor({
-                position: 'top-left',
-                renderer: renderer,
-                enableMemoryTracking: true,
-                enableWarnings: true,
-                fpsWarningThreshold: 30,
-                memoryWarningThreshold: 200
-            });
-        }
+                function initPerformanceMonitor() {
+                    perfMonitor = createPerformanceMonitor({
+                        position: 'top-left',
+                        renderer: renderer,
+                        enableMemoryTracking: true,
+                        enableWarnings: true,
+                        fpsWarningThreshold: 30,
+                        memoryWarningThreshold: 200
+                    });
+                }
 
-        function animate() {
-            animationId = requestAnimationFrame(animate);
-            if (controls) controls.update();
+                function animate() {
+                    animationId = requestAnimationFrame(animate);
+                    if (controls) controls.update();
 
-            // Update performance monitor (v3.0)
-            if (perfMonitor) perfMonitor.update();
+                    // Update performance monitor (v3.0)
+                    if (perfMonitor) perfMonitor.update();
 
-            // Prioritize composer if available, else standard render
-            if (composer) {
-                composer.render();
-            } else if (renderer && scene && camera) {
-                renderer.render(scene, camera);
-            }
-        }
+                    // Prioritize composer if available, else standard render
+                    if (composer) {
+                        composer.render();
+                    } else if (renderer && scene && camera) {
+                        renderer.render(scene, camera);
+                    }
+                }
 
-        function changeView() {
-            setView(camera, controls, model, selectedView.value);
-        }
+                function changeView() {
+                    setView(camera, controls, model, selectedView.value);
+                }
 
-        function initHoverBreath() {
-            ppManager = initPostProcessing(renderer, scene, camera, {
-                resolutionScale: 0.8,
-                edgeStrength: 4,
-                visibleEdgeColor: '#ffee00'
-            });
-            composer = ppManager.composer;
-            outlinePass = ppManager.outlinePass;
+                function initHoverBreath() {
+                    ppManager = initPostProcessing(renderer, scene, camera, {
+                        resolutionScale: 0.8,
+                        edgeStrength: 4,
+                        visibleEdgeColor: '#ffee00'
+                    });
+                    composer = ppManager.composer;
+                    outlinePass = ppManager.outlinePass;
 
-            hoverController = enableHoverBreath({
-                camera,
-                scene,
-                renderer,
-                outlinePass,
-                throttleDelay: 16,
-                minStrength: 2,
-                maxStrength: 8,
-                speed: 3
-            });
-        }
+                    hoverController = enableHoverBreath({
+                        camera,
+                        scene,
+                        renderer,
+                        outlinePass,
+                        throttleDelay: 16,
+                        minStrength: 2,
+                        maxStrength: 8,
+                        speed: 3
+                    });
+                }
 
-        function initClickHandler() {
-            disposeClickHandler = createModelClickHandler(camera, scene, renderer, outlinePass, (object, info) => {
-                console.log('Clicked object:', object);
-                console.log('Info:', info);
+                function initClickHandler() {
+                    disposeClickHandler = createModelClickHandler(camera, scene, renderer, outlinePass, (object, info) => {
+                        console.log('Clicked object:', object);
+                        console.log('Info:', info);
 
-                followModels(camera, object, {
-                    ...FOLLOW_ANGLES.ISOMETRIC,
-                    duration: 1500,
-                    padding: 0.5,
-                    controls,
-                    easing: 'easeInOut'
+                        followModels(camera, object, {
+                            ...FOLLOW_ANGLES.ISOMETRIC,
+                            duration: 1500,
+                            padding: 0.5,
+                            controls,
+                            easing: 'easeInOut'
+                        });
+
+                        modalTitle.value = info?.uuid || 'Details';
+                        modalContent.value = info;
+                        modalShow.value = true;
+                    });
+                }
+
+                function initGroupExploder() {
+                    exploder = new GroupExploder(scene, camera, controls);
+                    exploder.init();
+                }
+
+                function explode() {
+                    exploded.value = true;
+                    exploder.setMeshes(explosionTargets, { autoRestorePrev: true });
+                    exploder.explode({
+                        mode: 'grid',
+                        spacing: 2.8,
+                        duration: 1100,
+                        lift: 1.2,
+                        cameraPadding: 0.8,
+                        dimOthers: { enabled: true, opacity: 0.1 }
+                    });
+                }
+
+                function restore() {
+                    exploded.value = false;
+                    exploder.restore(600);
+                }
+
+                function liquidRestore() {
+                    fillerStatus.value = false;
+                    fillerGroup.restoreAll();
+                }
+
+                function filler() {
+                    fillerStatus.value = true;
+                    followModels(camera, Array.from(fillerTargets)[0], {
+                        duration: 500,
+                        padding: 0.8,
+                        controls,
+                    });
+                    if (fillerGroup) {
+                        fillerGroup.dispose();
+                    }
+                    fillerGroup = new LiquidFillerGroup(fillerTargets, scene, camera, renderer, {
+                        color: 0x00ff00,
+                        opacity: 0.5,
+                        speed: 0.01
+                    }, 10);
+                    fillerGroup.fillTo(fillerTargets, 0.8);
+                }
+
+                onBeforeUnmount(() => {
+                    disposeObject(model);
+                    if (disposeClickHandler) disposeClickHandler();
+                    if (hoverController) hoverController.dispose();
+                    if (exploder) exploder.dispose();
+                    if (fillerGroup) fillerGroup.dispose();
+                    if (ppManager) ppManager.dispose();
+                    if (labelManager) labelManager.dispose();
+                    if (perfMonitor) perfMonitor.dispose();
+
+                    if (animationId != null) {
+                        cancelAnimationFrame(animationId);
+                    }
+                    if (controls) controls.dispose();
+                    if (renderer) renderer.dispose();
+                    window.removeEventListener('resize', onWindowResize);
                 });
 
-                modalTitle.value = info?.uuid || 'Details';
-                modalContent.value = info;
-                modalShow.value = true;
-            });
-        }
-
-        function initGroupExploder() {
-            exploder = new GroupExploder(scene, camera, controls);
-            exploder.init();
-        }
-
-        function explode() {
-            exploded.value = true;
-            exploder.setMeshes(explosionTargets, { autoRestorePrev: true });
-            exploder.explode({
-                mode: 'grid',
-                spacing: 2.8,
-                duration: 1100,
-                lift: 1.2,
-                cameraPadding: 0.8,
-                dimOthers: { enabled: true, opacity: 0.1 }
-            });
-        }
-
-        function restore() {
-            exploded.value = false;
-            exploder.restore(600);
-        }
-
-        function liquidRestore() {
-            fillerStatus.value = false;
-            fillerGroup.restoreAll();
-        }
-
-        function filler() {
-            fillerStatus.value = true;
-            followModels(camera, Array.from(fillerTargets)[0], {
-                duration: 500,
-                padding: 0.8,
-                controls,
-            });
-            if (fillerGroup) {
-                fillerGroup.dispose();
-            }
-            fillerGroup = new LiquidFillerGroup(fillerTargets, scene, camera, renderer, {
-                color: 0x00ff00,
-                opacity: 0.5,
-                speed: 0.01
-            }, 10);
-            fillerGroup.fillTo(fillerTargets, 0.8);
-        }
-
-        onBeforeUnmount(() => {
-            disposeObject(model);
-            if (disposeClickHandler) disposeClickHandler();
-            if (hoverController) hoverController.dispose();
-            if (exploder) exploder.dispose();
-            if (fillerGroup) fillerGroup.dispose();
-            if (ppManager) ppManager.dispose();
-            if (labelManager) labelManager.dispose();
-            if (perfMonitor) perfMonitor.dispose();
-
-            if (animationId != null) {
-                cancelAnimationFrame(animationId);
-            }
-            if (controls) controls.dispose();
-            if (renderer) renderer.dispose();
-            window.removeEventListener('resize', onWindowResize);
-        });
-
-        return {
-            containerRef,
-            selectedView,
-            changeView,
-            explode,
-            restore,
-            exploded,
-            filler,
-            liquidRestore,
-            fillerStatus,
-            modalShow,
-            modalTitle,
-            modalContent,
-            JSON
-        };
+                return {
+                    containerRef,
+                    selectedView,
+                    changeView,
+                    explode,
+                    restore,
+                    exploded,
+                    filler,
+                    liquidRestore,
+                    fillerStatus,
+                    modalShow,
+                    modalTitle,
+                    modalContent,
+                    JSON
+                };
             }
         }).mount('#app');
     </script>
